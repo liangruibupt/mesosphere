@@ -83,7 +83,7 @@ The output should be printed once cluster creation is complete:
  - cluster-address - The URL you use to access DC/OS UI after the cluster is setup.
  - public-agent-loadbalancer - The URL of your Public routable services.
 
-The sample [main.tf](main.tf) 
+The sample [main.tf](https://github.com/liangruibupt/mesosphere/blob/master/main.tf) 
 
 ```
 variable "dcos_install_mode" {
