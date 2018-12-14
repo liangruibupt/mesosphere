@@ -1,0 +1,5 @@
+site_name: Mesosphere on AWS
+nav:
+    - Home: 'index.md'
+    - Install the Mesosphere DC/OS on AWS China Region based on Terraform: 'Install the Mesosphere on AWS China Region.md'
+theme: readthedocs
