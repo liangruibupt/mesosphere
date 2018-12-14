@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Install the Mesosphere DC/OS on AWS China Region based on Terraform - Mesosphere on AWS</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Install the Mesosphere DC/OS on AWS China Region based on Terraform";
+    var mkdocs_page_input_path = "Install the Mesosphere on AWS China Region.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> Mesosphere on AWS</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Install the Mesosphere DC/OS on AWS China Region based on Terraform</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#install-the-mesosphere-dcos-on-aws-china-region">Install the Mesosphere DC/OS on AWS China Region</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#hightlight">Hightlight</a></li>
+        
+            <li><a class="toctree-l3" href="#prerequisites">Prerequisites</a></li>
+        
+            <li><a class="toctree-l3" href="#creating-a-cluster">Creating a Cluster</a></li>
+        
+            <li><a class="toctree-l3" href="#next-step">Next step</a></li>
+        
+            <li><a class="toctree-l3" href="#deleting-your-cluster">Deleting Your Cluster</a></li>
+        
+            <li><a class="toctree-l3" href="#trouble-shooting">Trouble Shooting</a></li>
+        
+        </ul>
+    
+
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">Mesosphere on AWS</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Install the Mesosphere DC/OS on AWS China Region based on Terraform</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h1 id="install-the-mesosphere-dcos-on-aws-china-region">Install the Mesosphere DC/OS on AWS China Region</h1>
+<p>In this guide will walk you through step-by-step on how to:
+- Create an Open Source DC/OS Cluster on AWS in China Region, here I use the NingXia Region cn-northwest-1 as example
+- Destroy the cluster and all AWS resources associated with it</p>
+<h2 id="hightlight">Hightlight</h2>
+<ul>
+<li>Follow the <a href="https://docs.mesosphere.com/1.12/installing/evaluation/mesosphere-supported-methods/aws/">official guide</a> </li>
+<li>Update the IAM policy as China region format, such as <code>"Service": "ec2.amazonaws.com.cn"</code> </li>
+<li>Update the IBM policy ARN as China region format, such as <code>"Resource": "arn:aws-cn:s3"</code></li>
+<li>By default instance type is <code>m4</code> serial</li>
+</ul>
+<h2 id="prerequisites">Prerequisites</h2>
+<p>Terraform, AWS cloud credentials, SSH keys</p>
+<h3 id="installing-terraform">Installing Terraform</h3>
+<ul>
+<li>If you using MacOS as machine running deployment commands:</li>
+</ul>
+<pre><code>workspace ray$ brew install terraform
+workspace ray$ terraform -v
+Terraform v0.11.10
+</code></pre>
+
+<ul>
+<li>If you using Linux as machine running deployment commands:</li>
+</ul>
+<pre><code>[ec2-user@ip-10-0-0-16 ~]$ curl -O https://releases.hashicorp.com/terraform/0.11.10/terraform_0.11.10_linux_amd64.zip
+[ec2-user@ip-10-0-0-16 ~]$ sudo unzip terraform_0.11.10_linux_amd64.zip -d /usr/bin/
+Archive:  terraform_0.11.10_linux_amd64.zip
+  inflating: /usr/bin/terraform      
+[ec2-user@ip-10-0-0-16 ~]$ terraform -v
+Terraform v0.11.10
+</code></pre>
+
+<h3 id="set-the-aws-cloud-credentials-and-default-aws-region">Set the AWS Cloud Credentials and Default AWS Region</h3>
+<pre><code>[ec2-user@ip-10-0-0-16 ~]$ export AWS_DEFAULT_REGION=&quot;cn-northwest-1&quot;
+[ec2-user@ip-10-0-0-16 ~]$ aws configure
+AWS Access Key ID [None]: xxx
+AWS Secret Access Key [None]: xxxx
+Default region name [None]: cn-northwest-1
+Default output format [None]: json
+</code></pre>
+
+<h3 id="add-your-ssh-keys-to-your-ssh-agent">Add your SSH keys to your ssh agent</h3>
+<p>Add your ssh private key to ssh agent and record the public key location which will used in Terraform template.
+- You can using the existed key-pair in AWS cloud</p>
+<pre><code>[ec2-user@ip-10-0-0-16 ~]# eval `ssh-agent -s`
+[ec2-user@ip-10-0-0-16 ~]# ssh-add ~/.ssh/my-key-pair-cn-northwest-1.pem
+</code></pre>
+
+<ul>
+<li>You can also generate a new ssh key-pair, remember AWS cloud only accept the private key as <code>pem</code> file</li>
+</ul>
+<pre><code>[ec2-user@ip-10-0-0-16 ~]# ssh-keygen
+[ec2-user@ip-10-0-0-16 .ssh]$ openssl rsa -in ~/.ssh/id_rsa -outform pem &gt; id_rsa.pem
+writing RSA key
+[ec2-user@ip-10-0-0-16 .ssh]$ chmod 600 id_rsa.pem
+[ec2-user@ip-10-0-0-16 ~]# eval `ssh-agent -s`
+[ec2-user@ip-10-0-0-16 ~]# ssh-add ~/.ssh/id_rsa.pem
+</code></pre>
+
+<h3 id="enterprise-edition">Enterprise Edition</h3>
+<p>DC/OS Enterprise Edition also requires a valid license key provided by Mesosphere that we will pass into our <code>main.tf</code> as <code>dcos_license_key_contents</code></p>
+<h2 id="creating-a-cluster">Creating a Cluster</h2>
+<h3 id="prepare-the-template">Prepare the template</h3>
+<ul>
+<li>Make a folder</li>
+</ul>
+<pre><code>[ec2-user@ip-10-0-0-16 ~]$ mkdir mesoswphere
+[ec2-user@ip-10-0-0-16 ~]$ cd mesoswphere/
+</code></pre>
+
+<ul>
+<li>Copy and paste the sample template below into a <code>main.tf</code> file
+You can modify the parameter based on your environment requirement. The parameter guide can be found in <a href="https://docs.mesosphere.com/1.12/installing/evaluation/mesosphere-supported-methods/aws-advanced">Advanced DC/OS on AWS</a>
+The sample in here create DC/OS cluster with</li>
+<li>1 Master</li>
+<li>2 Private Agents</li>
+<li>1 Public Agent</li>
+</ul>
+<p>The output should be printed once cluster creation is complete:
+ - master-ips - A list of Your DC/OS Master Nodes.
+ - cluster-address - The URL you use to access DC/OS UI after the cluster is setup.
+ - public-agent-loadbalancer - The URL of your Public routable services.</p>
+<p>The sample <a href="main.tf">main.tf</a> </p>
+<pre><code>variable &quot;dcos_install_mode&quot; {
+  description = &quot;specifies which type of command to execute. Options: install or upgrade&quot;
+  default     = &quot;install&quot;
+}
+
+# Used to determine your public IP for forwarding rules
+data &quot;http&quot; &quot;whatismyip&quot; {
+  url = &quot;http://whatismyip.akamai.com/&quot;
+}
+
+module &quot;dcos&quot; {
+  source  = &quot;dcos-terraform/dcos/aws&quot;
+  version = &quot;~&gt; 0.1&quot;
+
+  dcos_instance_os    = &quot;coreos_1855.5.0&quot;
+  cluster_name        = &quot;my-open-dcos&quot;
+  ssh_public_key_file = &quot;~/.ssh/id_rsa.pub&quot;
+  admin_ips           = [&quot;${data.http.whatismyip.body}/32&quot;]
+
+  num_masters        = &quot;1&quot;
+  num_private_agents = &quot;2&quot;
+  num_public_agents  = &quot;1&quot;
+
+  dcos_version = &quot;1.11.4&quot;
+
+  # dcos_variant              = &quot;ee&quot;
+  # dcos_license_key_contents = &quot;${file(&quot;./license.txt&quot;)}&quot;
+  dcos_variant = &quot;open&quot;
+
+  dcos_install_mode = &quot;${var.dcos_install_mode}&quot;
+}
+
+output &quot;masters-ips&quot; {
+  value = &quot;${module.dcos.masters-ips}&quot;
+}
+
+output &quot;cluster-address&quot; {
+  value = &quot;${module.dcos.masters-loadbalancer}&quot;
+}
+
+output &quot;public-agents-loadbalancer&quot; {
+  value = &quot;${module.dcos.public-agents-loadbalancer}&quot;
+}
+</code></pre>
+
+<ul>
+<li>Initialize the DC/OS modules</li>
+</ul>
+<pre><code>[ec2-user@ip-10-0-0-16 ~]$ terraform init
+</code></pre>
+
+<h3 id="update-module-template-for-china-region">Update module template for China Region</h3>
+<p>In this document using <code>cn-northwest-1</code> and <code>dcos_instance_os    = "coreos_1855.5.0"</code> as example</p>
+<ul>
+<li>Make sure you have add the coreos_1855.5.0_cn-northwest-1 = "THE-CHINA-REGION-AMI-ID" to variables.tf under dcos-terraform-terraform-aws-tested-oses module
+ You can locate the coreos_1855.5.0 AMI from <code>EC2 console</code>, in this document, the <code>CoreOS-stable-1855.5.0-hvm - ami-0deaa8ada18aec612</code> will be used</li>
+</ul>
+<pre><code>[ec2-user@ip-10-0-0-16 mesoswphere]$ cd /home/ec2-user/mesoswphere/.terraform/modules/
+[ec2-user@ip-10-0-0-16 modules]$ find . -name &quot;variables.tf&quot; | xargs grep coreos_1855.5.0_us-east-1
+./d99c56292580257ac8db5932b7260aaf/dcos-terraform-terraform-aws-tested-oses-9d12bad/variables.tf:    coreos_1855.5.0_us-east-1      = &quot;ami-0bb5afc82c391abb7&quot;
+[ec2-user@ip-10-0-0-16 modules]$ vi ./d99c56292580257ac8db5932b7260aaf/dcos-terraform-terraform-aws-tested-oses-9d12bad/variables.tf
+
+Append the coreos_1855.5.0_cn-northwest-1 = &quot;ami-0deaa8ada18aec612&quot; under coreos_1855.5.0 section
+</code></pre>
+
+<ul>
+<li>Update the IAM policy as China region format <code>amazonaws.com.cn</code>, such as <code>"Service": "ec2.amazonaws.com.cn"</code></li>
+</ul>
+<pre><code>[ec2-user@ip-10-0-0-16 modules]$ find . -name &quot;*.tf&quot; | xargs grep ec2.amazonaws.com
+./4a68d476add99f51b98409007be95061/dcos-terraform-terraform-aws-iam-732ca6f/main.tf:        &quot;Service&quot;: &quot;ec2.amazonaws.com&quot;
+./4a68d476add99f51b98409007be95061/dcos-terraform-terraform-aws-iam-732ca6f/main.tf:        &quot;Service&quot;: &quot;ec2.amazonaws.com&quot;
+</code></pre>
+
+<ul>
+<li>Update the IAM policy ARN as China region format <code>arn:aws-cn</code>, such as <code>"Resource": "arn:aws-cn:s3"</code></li>
+</ul>
+<pre><code>[ec2-user@ip-10-0-0-16 modules]$ find . -name &quot;*.tf&quot; | xargs grep arn:aws
+From the result, You only need take care the generic ones as below
+./4a68d476add99f51b98409007be95061/dcos-terraform-terraform-aws-iam-732ca6f/main.tf:            &quot;Resource&quot;: &quot;arn:aws:s3:::soak-cluster-logs&quot;
+./4a68d476add99f51b98409007be95061/dcos-terraform-terraform-aws-iam-732ca6f/main.tf:            &quot;Resource&quot;: &quot;arn:aws:s3:::soak-cluster-logs/*&quot;
+./4a68d476add99f51b98409007be95061/dcos-terraform-terraform-aws-iam-732ca6f/main.tf:            &quot;arn:aws:s3:::soak-cluster-elk-snapshots&quot;
+./4a68d476add99f51b98409007be95061/dcos-terraform-terraform-aws-iam-732ca6f/main.tf:          &quot;Resource&quot;: &quot;arn:aws:s3:::soak-cluster-logs&quot;
+./4a68d476add99f51b98409007be95061/dcos-terraform-terraform-aws-iam-732ca6f/main.tf:          &quot;Resource&quot;: &quot;arn:aws:s3:::soak-cluster-logs/*&quot;
+
+You can ignore the region specific ones as below
+./4a68d476add99f51b98409007be95061/dcos-terraform-terraform-aws-iam-732ca6f/main.tf:          &quot;Resource&quot;: &quot;arn:aws:es:us-east-1:159577368695:domain/scaletestlogsinkpublic/*&quot;
+./2ecdde255497635b26a84c7b5338c609/dcos-terraform-terraform-aws-elb-dcos-2d7af12/main.tf: *   masters_acm_cert_arn = &quot;arn:aws:acm:us-east-1:123456789123:certificate/ooc4NeiF-1234-5678-9abc-vei5Eeniipo4&quot;
+./106d3b437ebfb290731d195ab84a133e/dcos-terraform-terraform-aws-elb-masters-dac18f6/main.tf: *   https_acm_cert_arn = &quot;arn:aws:acm:us-east-1:123456789123:certificate/ooc4NeiF-1234-5678-9abc-vei5Eeniipo4&quot;
+./17bc9f957dca1163b437d35f1403173d/dcos-terraform-terraform-aws-elb-masters-internal-100d26a/main.tf: *   https_acm_cert_arn = &quot;arn:aws:acm:us-east-1:123456789123:certificate/ooc4NeiF-1234-5678-9abc-vei5Eeniipo4&quot;
+./9420f912eb883ccbdd0d561090abba84/dcos-terraform-terraform-aws-elb-public-agents-1226e52/main.tf: *   https_acm_cert_arn = &quot;arn:aws:acm:us-east-1:123456789123:certificate/ooc4NeiF-1234-5678-9abc-vei5Eeniipo4&quot;
+./05e95323a497107fa47ecd7198629b00/dcos-terraform-terraform-aws-elb-fb17756/main.tf: *   aws_external_masters_acm_cert_arn = &quot;arn:aws:acm:us-east-1:123456789123:certificate/ooc4NeiF-1234-5678-9abc-vei5Eeniipo4&quot;
+
+</code></pre>
+
+<h3 id="run-the-execution-plan">Run the execution plan</h3>
+<p>Execute <code>terraform plan</code> and save it to a static file - in this case, <code>plan.out</code></p>
+<pre><code>terraform plan -out=plan.out
+
+</code></pre>
+
+<p>You will receive message as below to indicate the <code>plan.out</code> has been successfully generated.</p>
+<pre><code>Plan: 38 to add, 0 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+This plan was saved to: plan.out
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply &quot;plan.out&quot;
+
+</code></pre>
+
+<h3 id="let-terraform-to-builddeploy-the-plan">Let Terraform to build/deploy the plan</h3>
+<pre><code>terraform apply plan.out
+</code></pre>
+
+<p>If you have any problem, fix it and then generate the <code>updated plan</code> based on the <code>terraform.tfstate</code> to apply it again.</p>
+<pre><code>#terraform plan -out=plan_update.out -state=terraform.tfstate
+#terraform apply &quot;plan_update.out&quot;
+</code></pre>
+
+<p>Once Terraform has completed applying our plan, you should see output similar to the following:</p>
+<pre><code>Apply complete! Resources: 3 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+cluster-address = my-open-dcos-1551385834.cn-northwest-1.elb.amazonaws.com.cn
+masters-ips = [
+    52.82.30.84
+]
+public-agents-loadbalancer = ext-my-open-dcos-1935366512.cn-northwest-1.elb.amazonaws.com.cn
+</code></pre>
+
+<p>Congratulations - you’ve successfully installed a DC/OS cluster on AWS!</p>
+<h3 id="using-your-cluster">Using your cluster</h3>
+<ul>
+<li>Access the cluster from browser by using <code>masters-ips</code> or <code>cluster-address</code>
+If you can not access above DNS and IP. You should edit your security group, for example</li>
+</ul>
+<pre><code>Change 
+dcos-my-open-dcos-master-lb-firewall port 80/443 source to your_desktop_ip or 0.0.0.0/0
+dcos-my-open-dcos-admin-firewall. port 80/443/22 source to your_desktop_ip or 0.0.0.0/0
+</code></pre>
+
+<blockquote>
+<p>Login
+<img alt="" src="../Login.png" /></p>
+</blockquote>
+<ul>
+<li>Check the DC/OS cluster from Dashboard and deploy a service for testing
+In the service panel, click <code>Run a Service</code> or you can launch service from <code>Catalog</code> with certified packages.</li>
+</ul>
+<blockquote>
+<p>Dashboard
+<img alt="" src="../Dashboard.png" /></p>
+<p>Services
+<img alt="" src="../Services.png" /></p>
+</blockquote>
+<h2 id="next-step">Next step</h2>
+<p>You can follow up the guide to <a href="https://docs.mesosphere.com/1.12/installing/evaluation/mesosphere-supported-methods/aws/#scaling-your-cluster">Scaling Your Cluster</a> or <a href="https://docs.mesosphere.com/1.12/installing/evaluation/mesosphere-supported-methods/aws/#upgrading-your-cluster">Upgrading Your Cluster</a></p>
+<h2 id="deleting-your-cluster">Deleting Your Cluster</h2>
+<pre><code>#terraform destroy
+</code></pre>
+
+<p>Or you can run</p>
+<pre><code>[ec2-user@ip-10-0-0-33 mesoswphere]$ terraform plan -destroy -out=plan_destory.out
+...
+Plan: 0 to add, 0 to change, 38 to destroy.
+
+------------------------------------------------------------------------
+
+This plan was saved to: plan_destory.out
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply &quot;plan_destory.out&quot;
+
+[ec2-user@ip-10-0-0-33 mesoswphere]$ terraform apply &quot;plan_destory.out&quot;
+...
+Apply complete! Resources: 0 added, 0 changed, 38 destroyed.
+</code></pre>
+
+<h2 id="trouble-shooting">Trouble Shooting</h2>
+<ul>
+<li>Key pair related</li>
+</ul>
+<pre><code>module.dcos.module.dcos-infrastructure.module.dcos-master-instances.module.dcos-master-instances.null_resource.instance-prereq: timeout - last error: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
+</code></pre>
+
+<p>Make sure your private key as <code>pem</code> file and add it to your ssh agent by <code>ssh-add</code></p>
+<pre><code>openssl rsa -in ~/.ssh/id_rsa -outform pem &gt; id_rsa.pem
+writing RSA key
+chmod 600 id_rsa.pem
+ssh-add ~/.ssh/id_rsa.pem
+</code></pre>
+
+<ul>
+<li>Lookup the aws_ami failed, this is caused by China Region identifies has not included in Terraform default module</li>
+</ul>
+<pre><code>module.dcos.module.dcos-infrastructure.module.dcos-publicagent-instances.module.dcos-public-agent-instances.module.dcos-tested-oses.data.template_file.aws_ami: 1 error(s) occurred:
+
+module.dcos.module.dcos-infrastructure.module.dcos-publicagent-instances.module.dcos-public-agent-instances.module.dcos-tested-oses.data.template_file.aws_ami: lookup: lookup failed to find 'coreos_1855.5.0_cn-northwest-1' in:
+</code></pre>
+
+<p>Make sure you have add the coreos_1855.5.0_cn-northwest-1 = "THE-CHINA-REGION-AMI-ID" to variables.tf under dcos-terraform-terraform-aws-tested-oses module </p>
+<pre><code>cd /home/ec2-user/mesoswphere/.terraform/modules/
+find . -name &quot;variables.tf&quot; | xargs grep coreos_1855.5.0_us-east-1
+/home/ec2-user/mesoswphere/.terraform/modules/d99c56292580257ac8db5932b7260aaf/dcos-terraform-terraform-aws-tested-oses-9d12bad/variables.tf
+Append coreos_1855.5.0_cn-northwest-1 = &quot;THE-CHINA-REGION-AMI-ID&quot; under coreos_1855.5.0 section
+</code></pre>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href=".." class="btn btn-neutral" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href=".." style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>
